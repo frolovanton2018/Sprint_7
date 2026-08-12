@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 
 public class BaseTest {
 
@@ -17,11 +16,13 @@ public class BaseTest {
         RestAssured.baseURI = BASE_URL;
     }
 
-    protected void deleteCourier(String id) {
-        if (id == null) {
+    protected void deleteCourier(String login, String password) {
+        if (login == null) {
             return;
         }
         try {
+            CourierLoginResponse response = loginCourier(login, password);
+            String id = response.getId();
             given()
                     .contentType(ContentType.JSON)
                     .body("{\"id\": \"" + id + "\"}")
@@ -45,13 +46,16 @@ public class BaseTest {
                 .extract().path("id");
     }
 
-    protected void loginCourier(String login, String password) {
+    protected CourierLoginResponse loginCourier(String login, String password) {
         CourierLoginRequest loginRequest = new CourierLoginRequest(login, password);
-        given()
+        return given()
                 .header("Content-Type", "application/json")
                 .body(loginRequest)
                 .when()
-                .post(BASE_URL + "/api/v1/courier/login");
+                .post(BASE_URL + "/api/v1/courier/login")
+                .then()
+                .statusCode(200)
+                .extract().response().as(CourierLoginResponse.class);
     }
 
 }
