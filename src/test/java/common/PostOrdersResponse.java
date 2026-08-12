@@ -1,6 +1,6 @@
 package common;
 
-public class OrderResponse {
+public class PostOrdersResponse {
     public int track;
 
     public int getTrack() {

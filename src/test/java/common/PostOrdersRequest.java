@@ -1,6 +1,6 @@
 package common;
 
-public class OrderRequest {
+public class PostOrdersRequest {
     public String firstName;
     public String lastName;
     public String address;
@@ -11,9 +11,9 @@ public class OrderRequest {
     public String comment;
     public String[] color;
 
-    public OrderRequest(String firstName, String lastName, String address, int metroStation,
-                        String phone, int rentTime, String deliveryDate, String comment,
-                        String[] color) {
+    public PostOrdersRequest(String firstName, String lastName, String address, int metroStation,
+                             String phone, int rentTime, String deliveryDate, String comment,
+                             String[] color) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;

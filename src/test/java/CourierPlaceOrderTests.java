@@ -7,15 +7,15 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class CourierMakeOrderTests extends BaseTest {
+public class CourierPlaceOrderTests extends BaseTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"BLACK", "GREY", "BLACK,GREY", ""})
-    @Description("Создание заказа с разными цветами")
+    @Description("Проверка создания заказа с разными цветами")
     void createOrderWithColors(String colorParam) {
         String[] colors = colorParam.isEmpty() ? new String[]{} : colorParam.split(",");
 
-        OrderRequest request = new OrderRequest(
+        PostOrdersRequest request = new PostOrdersRequest(
                 "Naruto",
                 "Uchiha",
                 "Konoha, 142 apt.",
@@ -27,7 +27,7 @@ public class CourierMakeOrderTests extends BaseTest {
                 colors
         );
 
-        OrderResponse response = given()
+        PostOrdersResponse response = given()
                 .header("Content-Type", "application/json")
                 .body(request)
                 .when()
@@ -35,7 +35,7 @@ public class CourierMakeOrderTests extends BaseTest {
                 .then()
                 .statusCode(201)
                 .body("track", notNullValue())
-                .extract().response().as(OrderResponse.class);
+                .extract().response().as(PostOrdersResponse.class);
 
         System.out.println("Color: " + colorParam + " - track: " + response.getTrack());
     }
