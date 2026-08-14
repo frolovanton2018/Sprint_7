@@ -19,6 +19,7 @@ public class CourierCreationTests extends BaseTest {
     }
 
     @Test
+    @Step("Создание курьера")
     @Description("курьера можно создать и успешный запрос возвращает ok: true;")
     void createCourier() {
         CourierRequest courier = CourierRequestBuilder.createWithRandomLogin();
@@ -37,6 +38,7 @@ public class CourierCreationTests extends BaseTest {
     }
 
     @Test
+    @Step("Проверка запрета на создание двух одинаковых курьеров")
     @Description("Проверка запрета на создание двух одинаковых курьеров")
     void cannotCreateDuplicateCourier() {
         String uniqueLogin = "AF_TEST_" + new java.util.Random().nextInt(1000);
@@ -71,6 +73,7 @@ public class CourierCreationTests extends BaseTest {
 
 
     @Test
+    @Step("Валидация: пустой логин")
     @Description("Валидация полей - пустой логин")
     void missingLoginReturnsError() {
         CourierRequest courier = new CourierRequest(
@@ -91,6 +94,7 @@ public class CourierCreationTests extends BaseTest {
     }
 
     @Test
+    @Step("Валидация: пустой пароль")
     @Description("Валидация полей - пустой пароль")
     void missingPasswordReturnsError() {
         CourierRequest courier = new CourierRequest(

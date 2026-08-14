@@ -1,5 +1,6 @@
 package common;
 
+import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,7 @@ public class BaseTest {
         RestAssured.baseURI = BASE_URL;
     }
 
+    @Step("Удаление курьера по переданному id")
     protected void deleteCourier(String login, String password) {
         if (login == null) {
             return;
@@ -35,17 +37,18 @@ public class BaseTest {
         }
     }
 
+    @Step("Создание нового курьера")
     protected String createCourier(String login, String password) {
         CourierRequest createRequest = new CourierRequest(login, password, "Anton");
-        return given()
+         given()
                 .header("Content-Type", "application/json")
                 .body(createRequest)
                 .when()
-                .post(BASE_URL + "/api/v1/courier")
-                .then()
-                .extract().path("id");
+                .post(BASE_URL + "/api/v1/courier");
+                return null;
     }
 
+    @Step("Авторизация курьера")
     protected CourierLoginResponse loginCourier(String login, String password) {
         CourierLoginRequest loginRequest = new CourierLoginRequest(login, password);
         return given()
@@ -54,8 +57,19 @@ public class BaseTest {
                 .when()
                 .post(BASE_URL + "/api/v1/courier/login")
                 .then()
-                .statusCode(200)
                 .extract().response().as(CourierLoginResponse.class);
+    }
+
+    @Step("Удаление курьера по id")
+    protected String deleteCourierById(String id) {
+        DeleteCourierRequest request = new DeleteCourierRequest();
+        request.id = id;
+            given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when()
+                .delete(BASE_URL + "/api/v1/courier/" + id);
+        return null;
     }
 
 }

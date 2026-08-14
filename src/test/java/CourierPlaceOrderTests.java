@@ -1,5 +1,6 @@
 import common.*;
 import io.qameta.allure.Description;
+import io.qameta.allure.Step;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -10,6 +11,7 @@ import static org.hamcrest.Matchers.notNullValue;
 public class CourierPlaceOrderTests extends BaseTest {
 
     @ParameterizedTest
+    @Step("Создание заказа: цвета {color}")
     @ValueSource(strings = {"BLACK", "GREY", "BLACK,GREY", ""})
     @Description("Проверка создания заказа с разными цветами")
     void createOrderWithColors(String colorParam) {

@@ -1,6 +1,7 @@
 package common;
 
 import io.qameta.allure.Description;
+import io.qameta.allure.Step;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +19,7 @@ public class CourierLogInTests extends BaseTest {
     }
 
     @Test
+    @Step("Авторизация курьера")
     @Description("Курьер может авторизоваться и успешный запрос возвращает id")
     void courierCanLogin() {
         String login = "AF_TEST_" + new java.util.Random().nextInt(1000);
@@ -37,6 +39,7 @@ public class CourierLogInTests extends BaseTest {
     }
 
     @Test
+    @Step("Логин: пустые login и password")
     @Description("Запрос без login и password — возвращает 400")
     void loginWithoutFieldsReturns400() {
         CourierLoginRequest loginRequest = new CourierLoginRequest("", "");
@@ -52,6 +55,7 @@ public class CourierLogInTests extends BaseTest {
     }
 
     @Test
+    @Step("Логин: пустой пароль")
     @Description("Запрос только с login — возвращает 400")
     void loginWithoutPasswordReturns400() {
         CourierLoginRequest loginRequest = new CourierLoginRequest("ninja", "");
@@ -67,6 +71,7 @@ public class CourierLogInTests extends BaseTest {
     }
 
     @Test
+    @Step("Логин: пустой login")
     @Description("Запрос только с password — возвращает 400")
     void loginWithoutLoginReturns400() {
         CourierLoginRequest loginRequest = new CourierLoginRequest("", "1234");
@@ -82,6 +87,7 @@ public class CourierLogInTests extends BaseTest {
     }
 
     @Test
+    @Step("Логин: неправильный логин или пароль")
     @Description("Неправильный логин или пароль — возвращает 404")
     void wrongLoginOrPasswordReturns404() {
         String login = "nonexistent_user_" + new java.util.Random().nextInt(1000);
@@ -100,6 +106,7 @@ public class CourierLogInTests extends BaseTest {
     }
 
     @Test
+    @Step("Логин: правильный логин, неправильный пароль")
     @Description("Правильный логин, неправильный пароль — возвращает 404")
     void correctLoginWrongPasswordReturns404() {
         String login = "AF_TEST_" + new java.util.Random().nextInt(1000);
@@ -125,6 +132,7 @@ public class CourierLogInTests extends BaseTest {
     }
 
     @Test
+    @Step("Логин: неправильный логин, правильный пароль")
     @Description("Неправильный логин, правильный пароль")
     void WrongLoginCorrectPasswordReturns404() {
         String login = "AF_TEST_" + new java.util.Random().nextInt(1000);
@@ -150,6 +158,7 @@ public class CourierLogInTests extends BaseTest {
     }
 
     @Test
+    @Step("Логин: несуществующий пользователь")
     @Description("Попытка авторизации с несуществующим пользователем")
     void NonExistentUserReturn404() {
         String login = "Random_User_123456789" + System.currentTimeMillis();

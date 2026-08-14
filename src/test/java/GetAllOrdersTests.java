@@ -1,5 +1,6 @@
 import common.GetOrdersResponse;
 import io.qameta.allure.Description;
+import io.qameta.allure.Step;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -7,6 +8,7 @@ import static org.hamcrest.Matchers.notNullValue;
 
 public class GetAllOrdersTests {
     @Test
+    @Step("Получение списка заказов")
     @Description("Получение списка заказов - статус 200 OK")
     void getOrdersReturns200() {
         given()
@@ -17,6 +19,7 @@ public class GetAllOrdersTests {
     }
 
     @Test
+    @Step("Проверка наличия полей orders")
     @Description("Список заказов содержит поле orders")
     void getListOfOrders() {
         GetOrdersResponse response = given()
@@ -31,6 +34,7 @@ public class GetAllOrdersTests {
     }
 
     @Test
+    @Step("Проверка pageInfo")
     @Description("Список заказов содержит инфу о паганации")
     void getListOfOrdersContainsPageInfo() {
         GetOrdersResponse response = given()
