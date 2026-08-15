@@ -4,7 +4,7 @@ import io.qameta.allure.Step;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 public class GetAllOrdersTests {
     @Test
@@ -26,7 +26,8 @@ public class GetAllOrdersTests {
                 .when()
                 .get("/api/v1/orders")
                 .then()
-                .body("orders", notNullValue())
+                .statusCode(200)
+                .body("orders", hasSize(greaterThan(0)))
                 .extract().response().as(GetOrdersResponse.class);
 
         System.out.println("Total orders: " + response.pageInfo.total);
@@ -41,7 +42,10 @@ public class GetAllOrdersTests {
                 .when()
                 .get("/api/v1/orders")
                 .then()
-                .body("pageInfo", notNullValue())
+                .statusCode(200)
+                .body("pageInfo.page", notNullValue())
+                .body("pageInfo.total", greaterThan(0))
+                .body("pageInfo.limit", greaterThan(0))
                 .extract().response().as(GetOrdersResponse.class);
 
         System.out.println("Page: " + response.pageInfo.page);

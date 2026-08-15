@@ -2,6 +2,7 @@ import common.*;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -10,8 +11,8 @@ import static org.hamcrest.Matchers.equalTo;
 public class CourierDeletionTests extends BaseTest {
 
     @Test
-    @Step("Создание, логин курьера и дальнейшее удаление по id")
-    @Description("Успешное удаление курьера")
+    @DisplayName("Удаление курьера.Успешный запрос возвращает ok: true")
+    @Description("Тест создаёт курьера, авторизуется, удаляет его и проверяет корректный ответ")
     void deleteCourierReturnsOk() {
         String login = "AF_TEST_" + new java.util.Random().nextInt(1000000);
         String password = "Secret123!";
@@ -39,8 +40,9 @@ public class CourierDeletionTests extends BaseTest {
     }
 
     @Test
+    @DisplayName("Удаление курьера. Запрос без id - возвращает 400")
     @Step("Удаление курьера: отсутствует id")
-    @Description("Запрос без id - возвращает 400")
+    @Description("Тест проверяет что запрос без id возвращает код ответа 400")
     void deleteCourierWithoutIdReturns400() {
         String login = "AF_TEST_" + new java.util.Random().nextInt(1000000);
         String password = "Secret123!";
@@ -66,8 +68,9 @@ public class CourierDeletionTests extends BaseTest {
     }
 
     @Test
+    @DisplayName("Удаление курьера. Запрос с несуществующим id - возвращает 404")
     @Step("Удаление курьера: несуществующий id")
-    @Description("Запрос с несуществующим id - возвращает 404")
+    @Description("Тест проверяет что запрос с несуществующим id - возвращает код ответа 404")
     void deleteCourierWithNonExistentIdReturns404() {
         String login = "AF_TEST_" + new java.util.Random().nextInt(1000000);
         String password = "Secret123!";
@@ -96,8 +99,9 @@ public class CourierDeletionTests extends BaseTest {
     }
 
     @Test
+    @DisplayName("Удаление курьера. Повторная попытка удалить уже удаленного курьрера")
     @Step("Удаление курьера: повторная попытка")
-    @Description("Удаление дважды созданного курьера - вторая попытка возвращает 404")
+    @Description("Тест проверяет что удаление уже удаленного курьера - возвращает код ответа 404")
     void deleteAlreadyDeletedCourierReturns404() {
         String login = "AF_TEST_" + new java.util.Random().nextInt(1000000);
         String password = "Secret123!";
