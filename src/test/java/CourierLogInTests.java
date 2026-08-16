@@ -1,45 +1,45 @@
-import common.*;
+package common;
 
 import io.qameta.allure.Description;
+import io.qameta.allure.Step;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 
 public class CourierLogInTests extends BaseTest {
 
-    private String createdCourierId = null;
+    private String createdCourierLogin = null;
+    private String createdCourierPassword = null;
 
     @AfterEach
     void cleanup() {
-        deleteCourier(createdCourierId);
+        deleteCourier(createdCourierLogin, createdCourierPassword);
     }
 
     @Test
+    @Step("Авторизация курьера")
     @Description("Курьер может авторизоваться и успешный запрос возвращает id")
     void courierCanLogin() {
         String login = "AF_TEST_" + new java.util.Random().nextInt(1000);
         String password = "Secret123!";
 
+        createdCourierLogin = login;
+        createdCourierPassword = password;
+
         // Создаём курьера
-        createdCourierId = createCourier(login, password);
+        createCourier(login, password);
         System.out.println("Created login: " + login);
 
-        // Проверяем успешный логин
-        CourierLoginRequest loginRequest = new CourierLoginRequest(login, password);
-        given()
-                .header("Content-Type", "application/json")
-                .body(loginRequest)
-                .when()
-                .post("/api/v1/courier/login")
-                .then()
-                .statusCode(200)
-                .body("id", notNullValue());
+        // Авторизуемся
+        CourierLoginResponse loginResponse = loginCourier(login, password);
+        String userId = loginResponse.getId();
+        System.out.println("Login response id: " + userId);
     }
 
     @Test
+    @Step("Логин: пустые login и password")
     @Description("Запрос без login и password — возвращает 400")
     void loginWithoutFieldsReturns400() {
         CourierLoginRequest loginRequest = new CourierLoginRequest("", "");
@@ -55,6 +55,7 @@ public class CourierLogInTests extends BaseTest {
     }
 
     @Test
+    @Step("Логин: пустой пароль")
     @Description("Запрос только с login — возвращает 400")
     void loginWithoutPasswordReturns400() {
         CourierLoginRequest loginRequest = new CourierLoginRequest("ninja", "");
@@ -70,6 +71,7 @@ public class CourierLogInTests extends BaseTest {
     }
 
     @Test
+    @Step("Логин: пустой login")
     @Description("Запрос только с password — возвращает 400")
     void loginWithoutLoginReturns400() {
         CourierLoginRequest loginRequest = new CourierLoginRequest("", "1234");
@@ -85,6 +87,7 @@ public class CourierLogInTests extends BaseTest {
     }
 
     @Test
+    @Step("Логин: неправильный логин или пароль")
     @Description("Неправильный логин или пароль — возвращает 404")
     void wrongLoginOrPasswordReturns404() {
         String login = "nonexistent_user_" + new java.util.Random().nextInt(1000);
@@ -103,14 +106,19 @@ public class CourierLogInTests extends BaseTest {
     }
 
     @Test
+    @Step("Логин: правильный логин, неправильный пароль")
     @Description("Правильный логин, неправильный пароль — возвращает 404")
     void correctLoginWrongPasswordReturns404() {
         String login = "AF_TEST_" + new java.util.Random().nextInt(1000);
         String password = "Secret123!";
 
+        createdCourierLogin = login;
+        createdCourierPassword = password;
+
         // Создаём курьера
-        createdCourierId = createCourier(login, password);
+        createCourier(login, password);
         System.out.println("Created login: " + login);
+
         CourierLoginRequest loginRequest = new CourierLoginRequest(login, "WrongPassword123");
 
         given()
@@ -124,14 +132,19 @@ public class CourierLogInTests extends BaseTest {
     }
 
     @Test
+    @Step("Логин: неправильный логин, правильный пароль")
     @Description("Неправильный логин, правильный пароль")
-    void WrongLoginСorrectPasswordReturns404() {
+    void WrongLoginCorrectPasswordReturns404() {
         String login = "AF_TEST_" + new java.util.Random().nextInt(1000);
         String password = "Secret123!";
 
+        createdCourierLogin = login;
+        createdCourierPassword = password;
+
         // Создаём курьера
-        createdCourierId = createCourier(login, password);
+        createCourier(login, password);
         System.out.println("Created login: " + login);
+
         CourierLoginRequest loginRequest = new CourierLoginRequest("WrongLogin123", password);
 
         given()
@@ -145,6 +158,7 @@ public class CourierLogInTests extends BaseTest {
     }
 
     @Test
+    @Step("Логин: несуществующий пользователь")
     @Description("Попытка авторизации с несуществующим пользователем")
     void NonExistentUserReturn404() {
         String login = "Random_User_123456789" + System.currentTimeMillis();

@@ -1,5 +1,4 @@
 import common.*;
-
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.AfterEach;
@@ -11,47 +10,52 @@ import static org.hamcrest.Matchers.is;
 
 public class CourierCreationTests extends BaseTest {
 
-    private String createdCourierId = null;
+    private String createdCourierLogin = null;
+    private String createdCourierPassword = null;
 
     @AfterEach
     void cleanup() {
-        deleteCourier(createdCourierId);
+        deleteCourier(createdCourierLogin, createdCourierPassword);
     }
 
     @Test
+    @Step("Создание курьера")
     @Description("курьера можно создать и успешный запрос возвращает ok: true;")
     void createCourier() {
         CourierRequest courier = CourierRequestBuilder.createWithRandomLogin();
+        createdCourierLogin = courier.login;
+        createdCourierPassword = courier.password;
         System.out.println(courier);
 
-        createdCourierId = given()
+        given()
                 .header("Content-Type", "application/json")
                 .body(courier)
                 .when()
                 .post("/api/v1/courier")
                 .then()
                 .statusCode(201)
-                .body("ok", equalTo(true))
-                .extract().path("id");
+                .body("ok", equalTo(true));
     }
 
     @Test
-    @Description("нельзя создать двух одинаковых курьеров")
+    @Step("Проверка запрета на создание двух одинаковых курьеров")
+    @Description("Проверка запрета на создание двух одинаковых курьеров")
     void cannotCreateDuplicateCourier() {
         String uniqueLogin = "AF_TEST_" + new java.util.Random().nextInt(1000);
         CourierRequest courier = CourierRequestBuilder.create(uniqueLogin);
+        createdCourierLogin = uniqueLogin;
+        createdCourierPassword = "Secret123!";
         System.out.println(courier);
 
         // создаём курьера
-        createdCourierId = given()
+        given()
                 .header("Content-Type", "application/json")
                 .body(courier)
                 .when()
                 .post("/api/v1/courier")
                 .then()
                 .statusCode(201)
-                .body("ok", equalTo(true))
-                .extract().path("id");
+                .body("ok", equalTo(true));
 
         // пробуем создать того же — ожидается 409
         given()
@@ -69,6 +73,7 @@ public class CourierCreationTests extends BaseTest {
 
 
     @Test
+    @Step("Валидация: пустой логин")
     @Description("Валидация полей - пустой логин")
     void missingLoginReturnsError() {
         CourierRequest courier = new CourierRequest(
@@ -89,6 +94,7 @@ public class CourierCreationTests extends BaseTest {
     }
 
     @Test
+    @Step("Валидация: пустой пароль")
     @Description("Валидация полей - пустой пароль")
     void missingPasswordReturnsError() {
         CourierRequest courier = new CourierRequest(
