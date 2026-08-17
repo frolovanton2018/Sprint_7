@@ -44,7 +44,7 @@ public class BaseTest {
                 .header("Content-Type", "application/json")
                 .body(createRequest)
                 .when()
-                .post(BASE_URL + "/api/v1/courier");
+                .post(BASE_URL + "/api/v2/courier");
                 return null;
     }
 
